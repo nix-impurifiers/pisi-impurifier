@@ -2,6 +2,7 @@
 {
   pkgs,
   coreSrc,
+  sourceInfo ? { },
   distribution,
   distributionRelease,
 }:
@@ -9,7 +10,12 @@ let
   inherit (pkgs) lib;
   core = import (coreSrc + "/nix") {
     inherit pkgs;
-    sourceInfo = coreSrc;
+    sourceInfo = {
+      # Native updates must include adapter-only releases, not just engine pins.
+      lastModified = pkgs.lib.max (if builtins.isAttrs coreSrc then coreSrc.lastModified or 0 else 0) (
+        if builtins.isAttrs sourceInfo then sourceInfo.lastModified or 0 else 0
+      );
+    };
     namespace = "pisi-impurifier";
   };
   defaultDistribution = distribution;

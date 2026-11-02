@@ -12,6 +12,7 @@
       import ../../../nix {
         inherit pkgs distribution distributionRelease;
         coreSrc = inputs.impurifier;
+        sourceInfo = inputs.self;
       };
   };
   perSystem =
@@ -22,6 +23,7 @@
         distribution = "ImpurifierVM";
         distributionRelease = "1";
         coreSrc = inputs.impurifier;
+        sourceInfo = inputs.self;
       };
       nativeTools = import ../../../tests/tools.nix { legacySrc = inputs.legacy-nixpkgs; };
     in
