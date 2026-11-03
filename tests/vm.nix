@@ -4,6 +4,7 @@
   impurifier,
   hardwareFixture,
   nativeTools,
+  bundled ? false,
 }:
 let
   tool =
@@ -111,7 +112,12 @@ pkgs.testers.runNixOSTest {
     systemd.tmpfiles.rules = [
       "d /usr/bin 0755 root root -"
       "L+ /usr/bin/python3 - - - - ${pkgs.python3}/bin/python3"
-      "L+ /usr/bin/nix-store - - - - ${pkgs.nix}/bin/nix-store"
+      "L+ /usr/bin/nix-store - - - - ${
+        if bundled then
+          pkgs.writeShellScript "incompatible-nix-store" "echo incompatible; exit 1"
+        else
+          "${pkgs.nix}/bin/nix-store"
+      }"
       "L+ /usr/bin/systemctl - - - - ${pkgs.systemd}/bin/systemctl"
       "L+ /usr/bin/systemd-sysusers - - - - ${pkgs.systemd}/bin/systemd-sysusers"
       "L+ /usr/bin/systemd-tmpfiles - - - - ${pkgs.systemd}/bin/systemd-tmpfiles"
